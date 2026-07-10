@@ -17,3 +17,14 @@ Write a solution to report the fraction of players that logged in again on the d
 =============================================================================
 
 ### SOLUTION:
+SELECT round(COUNT(DISTINCT a.player_id) / (select count(distinct player_id)
+from Activity), 2) as fraction
+FROM Activity a
+JOIN (
+    SELECT player_id,
+           MIN(event_date) AS first_login
+    FROM Activity
+    GROUP BY player_id
+) t
+ON a.player_id = t.player_id
+AND datediff(a.event_date, t.first_login) = 1
