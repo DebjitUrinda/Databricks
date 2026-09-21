@@ -15,14 +15,31 @@ filterDf = account_transactions.filter(
 )
 
 w = Window.partitionBy("account_id").orderBy(
-      F.col("txn_date").asc()
+    F.col("txn_date").desc()
 )
 
-avgprev3salaryDf = filterDf.withColumn("avg_previous_3_salary",
-            F.avg("amount").over(w.rowsBetween(-3, -1))
+rankedDf = filtered.withColumn(
+    "rn",
+    F.row_number().over(w)
 )
 
-salarydropDf = avgprev3salaryDf.withColumn("salary_drop_percentage",
+currentsalDf = rankedDf.filter(
+      F.col("rn") == 1)
+
+prev3salDf = rankedDf.filter(
+      F.col("rn").between(2, 4))
+
+avgprev3salDf = prev3salDf.groupBy("account_id").agg(
+      F.avg("amount").alias("avg_previous_3_salary"),
+      F.count("*").alias("salary_count")
+)
+avgprev3salDf = avgprev3salDf.filter(
+      F.col("salary_count") == 3)
+
+currJoinAvgDf = currentsalDf.join(
+      avgprev3salDf, on="account_id", how="inner"
+
+salarydropDf = currJoinAvgDf.withColumn("salary_drop_percentage",
                   (F.col("avg_previous_3_salary")-F.col("amount"))/F.col("avg_previous_3_salary")*100
 )
 
