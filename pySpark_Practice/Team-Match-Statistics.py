@@ -43,6 +43,6 @@ result = total_matches.join(
      how="left"
 )
 
-result = result.withColumn("lose_count", F.col("total_match")-F.col("win_count"))
+result = result.withColumn("lose_count", F.col("total_match")-F.col("win_count")).orderBy("team")
 
 result.show()
