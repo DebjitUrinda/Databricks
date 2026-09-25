@@ -19,5 +19,6 @@ df_churn = df_lagged.withColumn(
     "Churn_count", F.array_except(F.col("prev_list"), F.col("customer_list"))
 )
 
-df_result = df_churn.select("month_num", "churn_count").\
-withColumn("month_num", F.col("month_num")).withColumn("churn_count", F.array_size("churn_count"))
+df_result = df_churn.select("month_num", F.array_size("churn_count").alias("churned_customers"))
+
+df_result.show()
