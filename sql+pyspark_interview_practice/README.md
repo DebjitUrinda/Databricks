@@ -1,3 +1,5 @@
+Link https://www.stratascratch.com/?utm_source=chatgpt.com
+
 | Bucket | What you should practice |
 |---|---|
 | 1. Joins | INNER, LEFT, FULL, CROSS, self-join, multi-table joins |
